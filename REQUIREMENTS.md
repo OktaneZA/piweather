@@ -29,7 +29,7 @@
 | WX-01 | Weather data fetched from Open-Meteo API (free, no API key required) |
 | WX-02 | Two-day forecast: today (index 0) and tomorrow (index 1) |
 | WX-03 | Data per day: WMO weather code, high temp, low temp, sunrise, sunset, date |
-| WX-04 | WMO codes mapped to InkyPi PNG icon filenames; day/night suffix applied for today based on current time vs sunrise/sunset |
+| WX-04 | WMO codes mapped to descriptive PNG icon filenames (e.g. `clear-sky-day.png`, `rain-night.png`) bundled in `src/icons/`; night variants used for today when current time is outside sunrise/sunset |
 | WX-05 | Tomorrow's icon always uses the daytime (`d`) variant |
 | WX-06 | Temperature unit configurable: `celsius` (default) or `fahrenheit` |
 | WX-07 | Weather refreshed every `weather_refresh_min` minutes (default 30); also refreshed immediately on config save |
@@ -65,6 +65,6 @@
 | INST-02 | Installer verifies it is running on a Raspberry Pi before proceeding |
 | INST-03 | Installer enables SPI interface via `raspi-config nonint do_spi 0` |
 | INST-04 | Installer creates system user `piweather` and adds to `spi` and `gpio` groups |
-| INST-05 | Installer downloads InkyPi weather icons to `src/icons/` via `wget` |
+| INST-05 | Weather icons are bundled in `src/icons/` in the repository; no download step required at install time |
 | INST-06 | Service managed by systemd; starts on boot after `network-online.target` |
 | INST-07 | `validate.py` performs 5 post-install checks: SPI, config, Open-Meteo API, icons, display init |

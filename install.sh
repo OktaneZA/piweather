@@ -133,37 +133,6 @@ for font in DejaVuSans.ttf DejaVuSans-Bold.ttf; do
 done
 
 # ------------------------------------------------------------------ #
-# Download InkyPi weather icons                                        #
-# ------------------------------------------------------------------ #
-
-step "Downloading weather icons from InkyPi"
-
-ICON_DIR="${INSTALL_DIR}/src/icons"
-mkdir -p "${ICON_DIR}"
-
-ICONS=(
-    01d 01n 02d 02n 03d 04d 04n
-    09d 09n 10d 10n 11d 11n 13d 13n
-    50d 50n 51d 51n 53d 53n 56d 57d
-    71d 73d 77d
-)
-ICON_BASE="https://raw.githubusercontent.com/fatihak/InkyPi/main/src/plugins/weather/icons"
-
-for icon in "${ICONS[@]}"; do
-    dest="${ICON_DIR}/${icon}.png"
-    if [[ -f "$dest" ]]; then
-        info "  ${icon}.png already present"
-    else
-        if wget -q "${ICON_BASE}/${icon}.png" -O "$dest"; then
-            info "  Downloaded ${icon}.png"
-        else
-            warn "  Failed to download ${icon}.png — display will use fallback"
-            rm -f "$dest"
-        fi
-    fi
-done
-
-# ------------------------------------------------------------------ #
 # Interactive configuration                                            #
 # ------------------------------------------------------------------ #
 

@@ -18,34 +18,49 @@ import weather as weather_module
 
 class TestWmoToIcon:
     def test_code_0_is_clear_sky_day(self):
-        assert weather_module.wmo_to_icon(0, is_night=False) == "01d"
+        assert weather_module.wmo_to_icon(0, is_night=False) == "clear-sky-day"
 
     def test_code_0_is_clear_sky_night(self):
-        assert weather_module.wmo_to_icon(0, is_night=True) == "01n"
+        assert weather_module.wmo_to_icon(0, is_night=True) == "clear-sky-night"
 
     def test_code_3_overcast_has_no_night_variant(self):
-        # overcast maps to "04" which has no night variant in our set
-        assert weather_module.wmo_to_icon(3, is_night=True) == "04d"
+        # overcast has no night variant no night variant, falls back to day icon
+        assert weather_module.wmo_to_icon(3, is_night=True) == "overcast-day"
+
+    def test_rain_showers_night_uses_day_icon(self):
+        # rain-showers has no night variant no night variant, falls back to day icon
+        assert weather_module.wmo_to_icon(80, is_night=True) == "rain-showers-day"
+
+    def test_thunderstorm_night_uses_day_icon(self):
+        # thunderstorm has no night variant no night variant, falls back to day icon
+        assert weather_module.wmo_to_icon(95, is_night=True) == "thunderstorm-day"
+
+    def test_fog_night_uses_day_icon(self):
+        # fog has no night variant no night variant, falls back to day icon
+        assert weather_module.wmo_to_icon(45, is_night=True) == "fog-day"
 
     def test_code_95_thunderstorm(self):
-        assert weather_module.wmo_to_icon(95) == "11d"
+        assert weather_module.wmo_to_icon(95) == "thunderstorm-day"
 
     def test_code_71_light_snow(self):
-        assert weather_module.wmo_to_icon(71) == "71d"
+        assert weather_module.wmo_to_icon(71) == "light-snow-day"
 
     def test_code_61_rain_day(self):
-        assert weather_module.wmo_to_icon(61) == "10d"
+        assert weather_module.wmo_to_icon(61) == "rain-day"
 
     def test_code_61_rain_night(self):
-        assert weather_module.wmo_to_icon(61, is_night=True) == "10n"
+        assert weather_module.wmo_to_icon(61, is_night=True) == "rain-night"
+
+    def test_partly_cloudy_has_night_variant(self):
+        assert weather_module.wmo_to_icon(2, is_night=True) == "partly-cloudy-night"
 
     def test_unknown_code_falls_back_to_clear_sky(self):
-        assert weather_module.wmo_to_icon(999) == "01d"
+        assert weather_module.wmo_to_icon(999) == "clear-sky-day"
 
     def test_tomorrow_always_day_icon(self):
         # wmo_to_icon is called with is_night=False for tomorrow
         icon = weather_module.wmo_to_icon(0, is_night=False)
-        assert icon.endswith("d")
+        assert icon.endswith("-day")
 
 
 class TestWmoDescription:
@@ -185,12 +200,12 @@ class TestFetchWeather:
             result = weather_module.fetch_weather(0.0, 0.0)
         icon = result["today"]["icon"]
         assert isinstance(icon, str)
-        assert icon.endswith("d") or icon.endswith("n")
+        assert icon.endswith("-day") or icon.endswith("-night")
 
     def test_tomorrow_icon_always_day(self):
         with patch("weather.requests.get", return_value=self._mock_get()):
             result = weather_module.fetch_weather(0.0, 0.0)
-        assert result["tomorrow"]["icon"].endswith("d")
+        assert result["tomorrow"]["icon"].endswith("-day")
 
     def test_tomorrow_wmo_code_63_is_rain(self):
         with patch("weather.requests.get", return_value=self._mock_get()):

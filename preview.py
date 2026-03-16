@@ -4,14 +4,12 @@
 Usage:
     python preview.py [output_dir]
 
-Downloads a small set of icons from InkyPi if not already present,
-then renders today, tomorrow, and error screens at 240×240 px.
-Saves them to output_dir (default: preview/).
+Renders today, tomorrow, and error screens at 240×240 px using the bundled
+icons in src/icons/. Saves them to output_dir (default: preview/).
 """
 
 import os
 import sys
-import urllib.request
 from datetime import datetime
 
 # Add src to path
@@ -25,31 +23,12 @@ import display as display_module
 OUT_DIR = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "preview")
 os.makedirs(OUT_DIR, exist_ok=True)
 
-ICON_DIR = os.path.join(_SRC, "icons")
-os.makedirs(ICON_DIR, exist_ok=True)
-
-ICON_BASE = "https://raw.githubusercontent.com/fatihak/InkyPi/main/src/plugins/weather/icons"
-PREVIEW_ICONS = ["01d", "01n", "02d", "10d", "10n", "11d", "13d", "09d", "50d", "04d"]
-
-print("Fetching icons …")
-for name in PREVIEW_ICONS:
-    path = os.path.join(ICON_DIR, f"{name}.png")
-    if os.path.isfile(path):
-        print(f"  {name}.png already present")
-    else:
-        url = f"{ICON_BASE}/{name}.png"
-        try:
-            urllib.request.urlretrieve(url, path)
-            print(f"  Downloaded {name}.png")
-        except Exception as exc:
-            print(f"  WARNING: could not fetch {name}.png — {exc}")
-
 # ------------------------------------------------------------------
 # Sample data
 # ------------------------------------------------------------------
 
 SAMPLE_TODAY = {
-    "icon": "02d",
+    "icon": "partly-cloudy-day",
     "description": "Partly Cloudy",
     "high": 24.0,
     "low": 18.0,
@@ -61,7 +40,7 @@ SAMPLE_TODAY = {
 }
 
 SAMPLE_TOMORROW = {
-    "icon": "10d",
+    "icon": "rain-day",
     "description": "Moderate Rain",
     "high": 19.5,
     "low": 14.2,
@@ -73,7 +52,7 @@ SAMPLE_TOMORROW = {
 }
 
 SAMPLE_FAHRENHEIT = {
-    "icon": "01d",
+    "icon": "clear-sky-day",
     "description": "Clear Sky",
     "high": 75.2,
     "low": 64.4,
@@ -85,7 +64,7 @@ SAMPLE_FAHRENHEIT = {
 }
 
 SAMPLE_SNOW = {
-    "icon": "13d",
+    "icon": "snow-day",
     "description": "Heavy Snow",
     "high": -2.0,
     "low": -8.0,
@@ -97,7 +76,7 @@ SAMPLE_SNOW = {
 }
 
 SAMPLE_STORM = {
-    "icon": "11d",
+    "icon": "thunderstorm-day",
     "description": "Thunderstorm",
     "high": 28.0,
     "low": 22.0,
@@ -109,7 +88,7 @@ SAMPLE_STORM = {
 }
 
 SAMPLE_NIGHT = {
-    "icon": "01n",
+    "icon": "clear-sky-night",
     "description": "Clear Sky",
     "high": 22.0,
     "low": 16.0,
@@ -133,7 +112,7 @@ SCREENS = [
     ("today_night",       SAMPLE_NIGHT,       0, datetime(2026, 3, 16, 22, 45)),
 ]
 
-print("\nRendering screens …")
+print("Rendering screens …")
 for filename, data, day, now in SCREENS:
     img = Image.new("RGB", (240, 240), (8, 12, 24))
     display_module.draw_weather(img, data, day=day, now=now)

@@ -3,8 +3,8 @@
 Uses Open-Meteo (free, no API key) for forecast data.
 Uses ipinfo.io (free, no key) for IP-based location detection.
 
-WMO weather codes are mapped to InkyPi icon filenames so the display
-module can load the correct PNG from src/icons/.
+WMO weather codes are mapped to descriptive icon filenames (e.g. clear-sky-day,
+rain-night) so the display module can load the correct PNG from src/icons/.
 """
 
 import logging
@@ -16,40 +16,41 @@ import requests
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------ #
-# WMO weather code → InkyPi icon name mapping                         #
+# WMO weather code → icon name mapping                                 #
 # ------------------------------------------------------------------ #
 
-# Map WMO code → base icon name (without d/n suffix).
-# Suffix is appended based on whether it is currently day or night.
-_WMO_TO_ICON: dict[int, str] = {
-    0:  "01",   # Clear sky
-    1:  "02",   # Mainly clear
-    2:  "02",   # Partly cloudy
-    3:  "04",   # Overcast
-    45: "50",   # Fog
-    48: "50",   # Depositing rime fog
-    51: "51",   # Light drizzle
-    53: "53",   # Moderate drizzle
-    55: "53",   # Dense drizzle
-    56: "56",   # Light freezing drizzle
-    57: "57",   # Dense freezing drizzle
-    61: "10",   # Slight rain
-    63: "10",   # Moderate rain
-    65: "10",   # Heavy rain
-    66: "10",   # Slight freezing rain
-    67: "10",   # Heavy freezing rain
-    71: "71",   # Slight snow fall
-    73: "73",   # Moderate snow fall
-    75: "73",   # Heavy snow fall
-    77: "77",   # Snow grains
-    80: "09",   # Slight rain showers
-    81: "09",   # Moderate rain showers
-    82: "09",   # Violent rain showers
-    85: "13",   # Slight snow showers
-    86: "13",   # Heavy snow showers
-    95: "11",   # Thunderstorm
-    96: "11",   # Thunderstorm with slight hail
-    99: "11",   # Thunderstorm with heavy hail
+# Map WMO code → (day_icon, night_icon).
+# night_icon is None when no night variant exists; falls back to day icon.
+# Icon names match the PNG filenames in src/icons/ (without the .png extension).
+_WMO_TO_ICON: dict[int, tuple[str, Optional[str]]] = {
+    0:  ("clear-sky-day",               "clear-sky-night"),      # Clear sky
+    1:  ("partly-cloudy-day",           "partly-cloudy-night"),  # Mainly clear
+    2:  ("partly-cloudy-day",           "partly-cloudy-night"),  # Partly cloudy
+    3:  ("overcast-day",                None),                   # Overcast
+    45: ("fog-day",                     None),                   # Fog
+    48: ("fog-day",                     None),                   # Depositing rime fog
+    51: ("light-drizzle-day",           None),                   # Light drizzle
+    53: ("drizzle-day",                 None),                   # Moderate drizzle
+    55: ("drizzle-day",                 None),                   # Dense drizzle
+    56: ("freezing-drizzle-day",        None),                   # Light freezing drizzle
+    57: ("heavy-freezing-drizzle-day",  None),                   # Dense freezing drizzle
+    61: ("rain-day",                    "rain-night"),           # Slight rain
+    63: ("rain-day",                    "rain-night"),           # Moderate rain
+    65: ("rain-day",                    "rain-night"),           # Heavy rain
+    66: ("rain-day",                    "rain-night"),           # Slight freezing rain
+    67: ("rain-day",                    "rain-night"),           # Heavy freezing rain
+    71: ("light-snow-day",              None),                   # Slight snow fall
+    73: ("snow-day",                    None),                   # Moderate snow fall
+    75: ("snow-day",                    None),                   # Heavy snow fall
+    77: ("snow-grains-day",             None),                   # Snow grains
+    80: ("rain-showers-day",            None),                   # Slight rain showers
+    81: ("rain-showers-day",            None),                   # Moderate rain showers
+    82: ("rain-showers-day",            None),                   # Violent rain showers
+    85: ("snow-showers-day",            None),                   # Slight snow showers
+    86: ("snow-showers-day",            None),                   # Heavy snow showers
+    95: ("thunderstorm-day",            None),                   # Thunderstorm
+    96: ("thunderstorm-day",            None),                   # Thunderstorm with slight hail
+    99: ("thunderstorm-day",            None),                   # Thunderstorm with heavy hail
 }
 
 # Human-readable description for each WMO code
@@ -84,23 +85,20 @@ _WMO_DESCRIPTION: dict[int, str] = {
     99: "Thunderstorm + Hail",
 }
 
-# Icons that have meaningful day/night variants in InkyPi
-_DAY_NIGHT_ICONS = {"01", "02", "09", "10", "11", "13", "50", "51", "53"}
-
-
 def wmo_to_icon(code: int, is_night: bool = False) -> str:
-    """Map WMO weather code to an InkyPi icon filename (without .png).
+    """Map WMO weather code to an icon filename stem (without .png extension).
 
     Args:
         code: WMO weather interpretation code (0–99).
-        is_night: If True and the icon has a night variant, return the night icon.
+        is_night: If True and a night variant exists, return the night icon name.
 
     Returns:
-        Icon base name, e.g. ``"01d"``, ``"10n"``.
+        Icon filename stem, e.g. ``"clear-sky-day"``, ``"rain-night"``.
     """
-    base = _WMO_TO_ICON.get(code, "01")
-    suffix = "n" if (is_night and base in _DAY_NIGHT_ICONS) else "d"
-    return f"{base}{suffix}"
+    day, night = _WMO_TO_ICON.get(code, ("clear-sky-day", "clear-sky-night"))
+    if is_night and night is not None:
+        return night
+    return day
 
 
 def wmo_description(code: int) -> str:
@@ -174,7 +172,7 @@ def fetch_weather(
 
     Returns:
         Dict with keys ``"today"`` and ``"tomorrow"``, each containing:
-          - ``icon``: InkyPi icon filename base (e.g. ``"01d"``)
+          - ``icon``: icon filename stem (e.g. ``"clear-sky-day"``)
           - ``description``: human-readable condition string
           - ``high``: high temperature (float, in requested unit)
           - ``low``: low temperature (float, in requested unit)

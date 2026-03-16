@@ -2,7 +2,7 @@
 
 ## What This Project Is
 
-A Raspberry Pi Zero 2 W weather display that shows today's and tomorrow's weather on a Waveshare 1.54" LCD (240×240 ST7789 SPI). Weather data from Open-Meteo (free, no API key). Icons from InkyPi. Includes a Flask web config portal.
+A Raspberry Pi Zero 2 W weather display that shows today's and tomorrow's weather on a Waveshare 1.54" LCD (240×240 ST7789 SPI). Weather data from Open-Meteo (free, no API key). Includes a Flask web config portal.
 
 ## Repository Structure
 
@@ -18,7 +18,7 @@ A Raspberry Pi Zero 2 W weather display that shows today's and tomorrow's weathe
 │   ├── display.py              ← ST7789 rendering via PIL
 │   ├── config.py               ← Config load/save/validate (JSON-based)
 │   ├── portal.py               ← Flask web config portal
-│   ├── icons/                  ← PNG weather icons (downloaded from InkyPi at install)
+│   ├── icons/                  ← PNG weather icons (bundled in the repository)
 │   ├── fonts/                  ← TTF fonts (DejaVuSans, DejaVuSans-Bold)
 │   └── templates/
 │       └── index.html
@@ -76,11 +76,11 @@ A Raspberry Pi Zero 2 W weather display that shows today's and tomorrow's weathe
 
 ## Weather Icons
 
-Icons are PNG files in `src/icons/`, named per InkyPi convention: `{code}{d|n}.png`
-e.g. `01d.png` (clear sky day), `10n.png` (rain night).
+Icons are PNG files bundled in `src/icons/`, named by weather event:
+e.g. `clear-sky-day.png`, `rain-night.png`, `thunderstorm-day.png`.
 
 WMO code → icon mapping is in `weather.py:_WMO_TO_ICON`.
-Icons downloaded from `https://raw.githubusercontent.com/fatihak/InkyPi/main/src/plugins/weather/icons/`
+Each entry maps to a `(day_icon, night_icon)` tuple; `night_icon` is `None` when no night variant exists.
 
 ## How to Run Tests
 

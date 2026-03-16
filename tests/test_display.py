@@ -30,7 +30,7 @@ def _blank_image() -> Image.Image:
 
 def _today_data() -> dict:
     return {
-        "icon": "01d",
+        "icon": "clear-sky-day",
         "description": "Clear Sky",
         "high": 24.0,
         "low": 18.0,
@@ -44,7 +44,7 @@ def _today_data() -> dict:
 
 def _tomorrow_data() -> dict:
     return {
-        "icon": "10d",
+        "icon": "rain-day",
         "description": "Moderate Rain",
         "high": 19.5,
         "low": 14.2,

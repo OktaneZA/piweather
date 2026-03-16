@@ -56,12 +56,21 @@ try:
 except Exception as exc:
     check("Open-Meteo API reachable", False, str(exc))
 
-# 4. Icon files present
+# 4. Icon files present (bundled in src/icons/ — no download required)
 ICON_DIR = os.path.join(_SRC, "icons")
-required_icons = ["01d.png", "01n.png", "10d.png", "11d.png"]
+required_icons = [
+    "clear-sky-day.png", "clear-sky-night.png",
+    "partly-cloudy-day.png", "partly-cloudy-night.png",
+    "few-clouds-day.png", "overcast-day.png",
+    "rain-showers-day.png", "rain-day.png", "rain-night.png",
+    "thunderstorm-day.png", "snow-showers-day.png",
+    "fog-day.png", "light-drizzle-day.png", "drizzle-day.png",
+    "freezing-drizzle-day.png", "heavy-freezing-drizzle-day.png",
+    "light-snow-day.png", "snow-day.png", "snow-grains-day.png",
+]
 missing = [i for i in required_icons if not os.path.isfile(os.path.join(ICON_DIR, i))]
 check("Weather icons present", not missing,
-      "missing: " + ", ".join(missing) if missing else f"{len(os.listdir(ICON_DIR))} icons found")
+      "missing: " + ", ".join(missing) if missing else f"{len(required_icons)} icons verified")
 
 # 5. Display init (hardware only)
 try:
