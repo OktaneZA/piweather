@@ -20,7 +20,7 @@ CONFIG_DIR="/etc/piweather"
 CONFIG_FILE="${CONFIG_DIR}/config.json"
 SERVICE_FILE="/etc/systemd/system/piweather.service"
 SERVICE_USER="piweather"
-REPO_URL="https://github.com/YOUR_USER/piweather.git"  # UPDATE THIS
+REPO_URL="https://github.com/OktaneZA/piweather.git"
 
 # ------------------------------------------------------------------ #
 # Verify Raspberry Pi                                                  #
