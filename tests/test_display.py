@@ -73,10 +73,10 @@ class TestDrawWeather:
 
     def test_draw_modifies_image(self):
         img = _blank_image()
-        before = list(img.getdata())
+        before = img.tobytes()
         now = datetime(2026, 3, 16, 14, 32)
         display_module.draw_weather(img, _today_data(), day=0, now=now)
-        after = list(img.getdata())
+        after = img.tobytes()
         # At least some pixels should have changed
         assert before != after
 
@@ -121,9 +121,9 @@ class TestDrawError:
 
     def test_draw_error_modifies_image(self):
         img = _blank_image()
-        before = list(img.getdata())
+        before = img.tobytes()
         display_module.draw_error(img, "Loading...")
-        after = list(img.getdata())
+        after = img.tobytes()
         assert before != after
 
     def test_draw_error_long_message(self):

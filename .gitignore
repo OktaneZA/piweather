@@ -10,3 +10,4 @@ build/
 *.tmp
 src/icons/*.png
 src/fonts/*.ttf
+preview/*.png

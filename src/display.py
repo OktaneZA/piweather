@@ -49,14 +49,32 @@ _FONT_DIR = os.path.join(os.path.dirname(__file__), "fonts")
 
 
 def _font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
-    """Load a bundled TrueType font.  Falls back to PIL default if not found."""
-    name = "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"
-    path = os.path.join(_FONT_DIR, name)
-    try:
-        return ImageFont.truetype(path, size)
-    except (IOError, OSError):
-        logger.warning("Font %s not found — using PIL default", path)
-        return ImageFont.load_default()
+    """Load a TrueType font at *size* px.
+
+    Search order:
+    1. Bundled font in src/fonts/ (DejaVuSans / DejaVuSans-Bold)
+    2. Common system font locations (DejaVu → Liberation → Arial → FreeSans)
+    3. PIL built-in bitmap fallback (no size control)
+    """
+    candidates = [
+        os.path.join(_FONT_DIR, "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"),
+        # Linux / Raspberry Pi OS
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold else
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        # Windows
+        "C:/Windows/Fonts/arialbd.ttf" if bold else "C:/Windows/Fonts/arial.ttf",
+        # macOS
+        "/Library/Fonts/Arial Bold.ttf" if bold else "/Library/Fonts/Arial.ttf",
+    ]
+    for path in candidates:
+        try:
+            return ImageFont.truetype(path, size)
+        except (IOError, OSError):
+            continue
+    logger.warning("No TrueType font found (size=%d bold=%s) — using PIL default", size, bold)
+    return ImageFont.load_default()
 
 
 # ------------------------------------------------------------------ #
@@ -196,7 +214,8 @@ def draw_weather(
     if date_str:
         try:
             dt = datetime.strptime(date_str, "%Y-%m-%d")
-            date_label = dt.strftime("%A %-d %B %Y")
+            # %-d (Linux) / %#d (Windows) strips leading zero — use manual format instead
+            date_label = f"{dt.strftime('%A')} {dt.day} {dt.strftime('%B %Y')}"
         except (ValueError, AttributeError):
             date_label = date_str
     else:
