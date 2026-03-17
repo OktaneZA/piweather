@@ -293,7 +293,7 @@ class ST7789:
     CS_PIN    = 8   # BCM GPIO pin for CE0 (physical pin 24)
     SPI_PORT  = 0
     SPI_CS    = 0   # spidev chip-select index: 0 = CE0 → /dev/spidev0.0
-    SPI_SPEED = 40_000_000
+    SPI_SPEED = 16_000_000
 
     def __init__(self, brightness: int = 100) -> None:
         """Initialise display via the st7789 library."""
