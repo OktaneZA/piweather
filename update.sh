@@ -1,24 +1,28 @@
 #!/usr/bin/env bash
-# PiWeather updater — pull latest code and restart service.
+# PiWeather updater — re-download latest release and restart service.
 set -euo pipefail
 
 INSTALL_DIR="/opt/piweather"
+TARBALL_URL="https://github.com/OktaneZA/piweather/archive/refs/heads/master.tar.gz"
 
 [[ "$EUID" -eq 0 ]] || { echo "Run as root: sudo bash update.sh" >&2; exit 1; }
 
-echo "Pulling latest code …"
-git -C "${INSTALL_DIR}" pull --quiet
-echo "Updated to $(git -C "${INSTALL_DIR}" rev-parse --short HEAD)"
+echo "[INFO] Downloading latest release …"
+TMP_DIR="$(mktemp -d)"
+curl -fsSL "${TARBALL_URL}" | tar -xz -C "${TMP_DIR}"
+rm -rf "${INSTALL_DIR}"
+mv "${TMP_DIR}"/piweather-master "${INSTALL_DIR}"
+rm -rf "${TMP_DIR}"
 
-echo "Reinstalling dependencies …"
+echo "[INFO] Reinstalling dependencies …"
 "${INSTALL_DIR}/.venv/bin/pip" install --quiet --upgrade -r "${INSTALL_DIR}/requirements.txt"
 
-echo "Restarting service …"
+echo "[INFO] Restarting service …"
 systemctl restart piweather.service
 sleep 2
 
 if systemctl is-active --quiet piweather.service; then
-    echo "Service restarted successfully"
+    echo "[INFO] Service restarted successfully."
 else
-    echo "Service may not have started — check: journalctl -u piweather -n 50"
+    echo "[WARN] Service may not have started — check: journalctl -u piweather -n 50"
 fi

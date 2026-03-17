@@ -20,7 +20,7 @@ CONFIG_DIR="/etc/piweather"
 CONFIG_FILE="${CONFIG_DIR}/config.json"
 SERVICE_FILE="/etc/systemd/system/piweather.service"
 SERVICE_USER="piweather"
-REPO_URL="https://github.com/OktaneZA/piweather.git"
+TARBALL_URL="https://github.com/OktaneZA/piweather/archive/refs/heads/master.tar.gz"
 
 # ------------------------------------------------------------------ #
 # Verify Raspberry Pi                                                  #
@@ -70,16 +70,13 @@ fi
 
 step "Installing PiWeather to ${INSTALL_DIR}"
 
-if [[ -d "${INSTALL_DIR}/.git" ]]; then
-    info "Updating existing installation …"
-    git -C "${INSTALL_DIR}" fetch --quiet
-    git -C "${INSTALL_DIR}" reset --hard origin/master --quiet
-    info "Updated to $(git -C "${INSTALL_DIR}" rev-parse --short HEAD)"
-else
-    info "Cloning repository …"
-    git clone --quiet "${REPO_URL}" "${INSTALL_DIR}"
-    info "Cloned to ${INSTALL_DIR}"
-fi
+info "Downloading latest release …"
+TMP_DIR="$(mktemp -d)"
+curl -fsSL "${TARBALL_URL}" | tar -xz -C "${TMP_DIR}"
+rm -rf "${INSTALL_DIR}"
+mv "${TMP_DIR}"/piweather-master "${INSTALL_DIR}"
+rm -rf "${TMP_DIR}"
+info "Installed to ${INSTALL_DIR}"
 
 # ------------------------------------------------------------------ #
 # Python venv                                                          #
