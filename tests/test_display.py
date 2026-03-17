@@ -12,7 +12,7 @@ if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
 
 # Mock hardware modules before importing display
-for mod in ("ST7789", "RPi", "RPi.GPIO", "spidev"):
+for mod in ("RPi", "RPi.GPIO", "spidev"):
     if mod not in sys.modules:
         sys.modules[mod] = MagicMock()
 

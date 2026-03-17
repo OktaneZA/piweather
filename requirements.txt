@@ -1,6 +1,6 @@
 Flask>=2.3,<4
 Pillow>=10.0
 requests>=2.31
-st7789>=0.0.4
+numpy>=1.24
 RPi.GPIO>=0.7
 spidev>=3.6
