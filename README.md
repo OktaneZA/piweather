@@ -82,7 +82,7 @@ Solder the 2×20 pin header onto the Pi Zero 2 W before connecting the display.
 Run this single command on the Pi (as root):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/OktaneZA/piweather/main/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/OktaneZA/piweather/master/install.sh | sudo bash
 ```
 
 The installer will:
