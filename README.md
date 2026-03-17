@@ -75,6 +75,8 @@ Solder the 2×20 pin header onto the Pi Zero 2 W before connecting the display.
 | RST | GPIO 27 | Pin 13 |
 | BL | GPIO 18 | Pin 12 |
 
+![Wiring Diagram](docs/wiring-diagram.png)
+
 ---
 
 ## Step 4 — Install PiWeather
