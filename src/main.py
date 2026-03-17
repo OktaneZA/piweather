@@ -197,7 +197,11 @@ def _render_loop(config_path: str, display: ST7789) -> None:
                 else:
                     draw_error(image, "Weather unavailable")
 
-            display.show(image)
+            try:
+                display.show(image)
+                logger.debug("Display updated (epoch=%d day=%d)", epoch, current_day)
+            except Exception as exc:  # noqa: BLE001
+                logger.error("Display show() failed: %s", exc, exc_info=True)
             prev_epoch = epoch
             prev_day = current_day
 
