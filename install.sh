@@ -188,7 +188,8 @@ for _ in range(100):
 sys.exit(1)
 PYEOF
 )
-info "Selected portal port: ${PORTAL_PORT}"
+PORTAL_IP=$(hostname -I | awk '{print $1}')
+info "Web portal will be available at: http://${PORTAL_IP}:${PORTAL_PORT}"
 
 # ------------------------------------------------------------------ #
 # Hash the portal password                                             #
@@ -278,7 +279,6 @@ echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━
 echo -e "${GREEN}  PiWeather installed successfully!${NC}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-PORTAL_IP=$(hostname -I | awk '{print $1}')
 echo -e "  Web portal:  ${CYAN}http://${PORTAL_IP}:${PORTAL_PORT}${NC}"
 if [[ -n "${PORTAL_PASSWORD}" ]]; then
     echo -e "  Credentials: ${CYAN}admin / <password set during install>${NC}  (stored as PBKDF2 hash)"
