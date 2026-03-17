@@ -289,7 +289,7 @@ class ST7789:
 
     DC_PIN    = 25
     RST_PIN   = 27
-    BL_PIN    = 24
+    BL_PIN    = 18   # GPIO 18, physical pin 12 (Waveshare standard wiring)
     CS_PIN    = 8   # BCM GPIO pin for CE0 (physical pin 24)
     SPI_PORT  = 0
     SPI_CS    = 0   # spidev chip-select index: 0 = CE0 → /dev/spidev0.0

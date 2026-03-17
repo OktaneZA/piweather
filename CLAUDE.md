@@ -69,7 +69,7 @@ A Raspberry Pi Zero 2 W weather display that shows today's and tomorrow's weathe
 
 ## Display Notes
 
-- ST7789: same GPIO as BambuHelper (DC=25, RST=27, BL=24, CS=8, MOSI=10, CLK=11)
+- ST7789: DC=25, RST=27, BL=18, CS=8, MOSI=10, CLK=11 (matches Waveshare standard wiring)
 - All rendering into a PIL `Image.new("RGB", (240, 240))`, then pushed via `display.show()`
 - Icons: RGBA PNG composited onto dark background before pasting onto RGB image
 - Fonts: DejaVuSans from `src/fonts/`; PIL fallback if not found

@@ -73,7 +73,7 @@ Solder the 2×20 pin header onto the Pi Zero 2 W before connecting the display.
 | CS | GPIO 8 | Pin 24 (CE0) |
 | DC | GPIO 25 | Pin 22 |
 | RST | GPIO 27 | Pin 13 |
-| BL | GPIO 24 | Pin 18 |
+| BL | GPIO 18 | Pin 12 |
 
 ---
 
