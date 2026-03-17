@@ -10,8 +10,9 @@ TARBALL_URL="https://github.com/OktaneZA/piweather/archive/refs/heads/master.tar
 echo "[INFO] Downloading latest release …"
 TMP_DIR="$(mktemp -d)"
 curl -fsSL "${TARBALL_URL}" | tar -xz -C "${TMP_DIR}"
+EXTRACTED_DIR="$(find "${TMP_DIR}" -mindepth 1 -maxdepth 1 -type d | head -1)"
 rm -rf "${INSTALL_DIR}"
-mv "${TMP_DIR}"/piweather-master "${INSTALL_DIR}"
+mv "${EXTRACTED_DIR}" "${INSTALL_DIR}"
 rm -rf "${TMP_DIR}"
 
 echo "[INFO] Reinstalling dependencies …"
