@@ -33,7 +33,7 @@ step "Checking environment"
 if [[ ! -f /proc/device-tree/model ]] || ! grep -qi "raspberry" /proc/device-tree/model; then
     error "This installer must run on a Raspberry Pi."
 fi
-info "Raspberry Pi detected: $(cat /proc/device-tree/model)"
+info "Raspberry Pi detected: $(tr -d '\0' < /proc/device-tree/model)"
 
 # ------------------------------------------------------------------ #
 # System packages                                                      #
@@ -138,24 +138,34 @@ done
 
 step "Configuring PiWeather"
 
+# Pre-initialise all interactive variables so set -u never fires if read
+# receives EOF (which happens when the script is piped via curl | bash).
+# All reads explicitly use /dev/tty so they reach the user's terminal
+# regardless of how stdin is connected.
+LAT=""
+LON=""
+TEMP_UNIT="celsius"
+FLIP_INTERVAL="10"
+PORTAL_PASSWORD=""
+
 echo ""
 echo "Location (leave both blank to auto-detect from IP):"
-read -r -p "Latitude  [blank=auto]: " LAT
-read -r -p "Longitude [blank=auto]: " LON
+read -r -p "Latitude  [blank=auto]: " LAT          </dev/tty || true
+read -r -p "Longitude [blank=auto]: " LON          </dev/tty || true
 echo ""
 
-read -r -p "Temperature unit (celsius/fahrenheit) [celsius]: " TEMP_UNIT
+read -r -p "Temperature unit (celsius/fahrenheit) [celsius]: " TEMP_UNIT </dev/tty || true
 TEMP_UNIT="${TEMP_UNIT:-celsius}"
 if [[ "$TEMP_UNIT" != "celsius" && "$TEMP_UNIT" != "fahrenheit" ]]; then
     warn "Invalid unit — defaulting to celsius"
     TEMP_UNIT="celsius"
 fi
 
-read -r -p "Flip interval in seconds (today→tomorrow) [10]: " FLIP_INTERVAL
+read -r -p "Flip interval in seconds (today→tomorrow) [10]: " FLIP_INTERVAL </dev/tty || true
 FLIP_INTERVAL="${FLIP_INTERVAL:-10}"
 
 echo ""
-read -r -s -p "Web portal password (leave blank for localhost-only access): " PORTAL_PASSWORD
+read -r -s -p "Web portal password (leave blank for localhost-only access): " PORTAL_PASSWORD </dev/tty || true
 echo ""
 
 # ------------------------------------------------------------------ #
