@@ -307,10 +307,12 @@ class ST7789:
             rst=self.RST_PIN,
             backlight=self.BL_PIN,
             rotation=0,
+            invert=True,
             spi_speed_hz=self.SPI_SPEED,
             width=WIDTH,
             height=HEIGHT,
         )
+        self._disp.begin()
 
         self._GPIO = GPIO
         GPIO.setmode(GPIO.BCM)
