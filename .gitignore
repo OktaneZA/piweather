@@ -8,6 +8,5 @@ build/
 .pytest_cache/
 .coverage
 *.tmp
-src/icons/*.png
 src/fonts/*.ttf
 preview/*.png
